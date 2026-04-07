@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Modelling — Interactive Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ===================== RESET & BASE ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0c0f;
+  --bg2: #111318;
+  --bg3: #181c23;
+  --surface: #1e2330;
+  --surface2: #252d3d;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e8ecf4;
+  --text2: #8a93a8;
+  --text3: #545d72;
+  --amber: #f5a623;
+  --amber2: #ffca6e;
+  --teal: #2dd4b0;
+  --teal2: #6ef0d8;
+  --blue: #4a90e8;
+  --purple: #9b7fe8;
+  --coral: #f06b6b;
+  --green: #5cb87a;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 40px rgba(245,166,35,0.12);
+  --trans: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+/* ===================== NAV ===================== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 40px;
+  background: rgba(10,12,15,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid var(--border);
+  transition: var(--trans);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.nav-logo .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.nav-links {
+  display: flex; gap: 6px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px; font-weight: 400;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: var(--trans);
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--text);
+  background: var(--surface);
+}
+
+/* ===================== HERO ===================== */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 40px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  max-width: 820px;
+  text-align: center;
+  animation: fadeUp 0.9s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+  color: var(--amber);
+  background: rgba(245,166,35,0.1);
+  border: 0.5px solid rgba(245,166,35,0.25);
+  padding: 6px 16px; border-radius: 20px;
+  margin-bottom: 28px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  animation: fadeUp 0.9s 0.1s both;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 8vw, 80px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  animation: fadeUp 0.9s 0.2s both;
+}
+
+h1 .accent { color: var(--amber); }
+
+.hero-sub {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: var(--text2);
+  font-weight: 300;
+  max-width: 560px;
+  margin: 0 auto 16px;
+  animation: fadeUp 0.9s 0.3s both;
+}
+
+.hero-analogy {
+  display: inline-flex; align-items: flex-start; gap: 12px;
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin: 0 auto 36px;
+  text-align: left;
+  max-width: 560px;
+  animation: fadeUp 0.9s 0.4s both;
+}
+
+.analogy-icon {
+  font-size: 22px; flex-shrink: 0; margin-top: 1px;
+}
+
+.analogy-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.analogy-text strong { color: var(--text); font-weight: 500; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--amber);
+  color: #0a0c0f;
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 50px;
+  border: none; cursor: pointer;
+  text-decoration: none;
+  transition: var(--trans);
+  box-shadow: 0 4px 20px rgba(245,166,35,0.3);
+  animation: fadeUp 0.9s 0.5s both;
+}
+
+.btn-primary:hover {
+  background: var(--amber2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(245,166,35,0.4);
+}
+
+.btn-primary .arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover .arrow { transform: translateX(4px); }
+
+.hero-stats {
+  display: flex; justify-content: center; gap: 40px;
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 0.5px solid var(--border);
+  animation: fadeUp 0.9s 0.6s both;
+}
+
+.stat { text-align: center; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 700;
+  color: var(--teal);
+}
+.stat-label { font-size: 12px; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; margin-top: 2px; }
+
+/* ===================== SECTION BASE ===================== */
+section {
+  padding: 100px 40px;
+}
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+.section-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 17px; color: var(--text2); font-weight: 300;
+  max-width: 560px; line-height: 1.65;
+}
+
+/* ===================== PROCESS (FLOWCHART) ===================== */
+#process { background: var(--bg2); }
+
+.flow-wrapper {
+  margin-top: 56px;
+  position: relative;
+}
+
+/* Breadcrumb trail */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 28px;
+  font-size: 13px; color: var(--text3);
+  flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  color: var(--text2);
+  transition: color 0.2s;
+}
+
+.breadcrumb-item:hover { color: var(--amber); }
+
+.breadcrumb-item.active { color: var(--text); font-weight: 500; }
+.breadcrumb-sep { color: var(--text3); }
+
+/* Back button */
+.btn-back {
+  display: none; align-items: center; gap: 8px;
+  background: var(--surface); border: 0.5px solid var(--border2);
+  color: var(--text2); font-size: 13px; font-weight: 500;
+  padding: 8px 18px; border-radius: 20px;
+  cursor: pointer; margin-bottom: 28px;
+  transition: var(--trans);
+}
+
+.btn-back:hover { color: var(--text); background: var(--surface2); }
+.btn-back.visible { display: inline-flex; }
+
+/* Flow grid */
+.flow-level-title {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 600;
+  color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  animation: fadeIn 0.4s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.flow-node {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: var(--trans);
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-node::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--node-color, var(--amber));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.flow-node:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: var(--shadow); }
+.flow-node:hover::before { transform: scaleX(1); }
+
+.flow-node.root-node { grid-column: 1 / -1; max-width: 600px; margin: 0 auto; }
+
+.node-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+  background: rgba(255,255,255,0.05);
+}
+
+.node-title {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.node-desc {
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.node-badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text2);
+  margin-right: 6px; margin-bottom: 6px;
+}
+
+.node-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 16px; padding-top: 14px;
+  border-top: 0.5px solid var(--border);
+  font-size: 12px; color: var(--text3);
+}
+
+.node-drill {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--node-color, var(--amber));
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Detail panel */
+.detail-panel {
+  display: none;
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  margin-top: 8px;
+  animation: expandDown 0.35s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+@keyframes expandDown {
+  from { opacity: 0; transform: scale(0.97) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.detail-panel.open { display: block; }
+
+.detail-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 28px;
+}
+
+.detail-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface2);
+  border: 0.5px solid var(--border2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text2); flex-shrink: 0;
+  transition: var(--trans);
+}
+
+.detail-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 800;
+  line-height: 1.2;
+}
+
+.detail-short {
+  font-size: 15px; color: var(--text2); line-height: 1.7;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.detail-long {
+  font-size: 14px; color: var(--text2); line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.detail-items {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.detail-item-label {
+  font-size: 11px; color: var(--text3);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.detail-item-val {
+  font-size: 14px; font-weight: 500; color: var(--text);
+}
+
+.children-hint {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(245,166,35,0.06);
+  border: 0.5px solid rgba(245,166,35,0.2);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-top: 20px;
+  font-size: 13px; color: var(--amber);
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.children-hint:hover { background: rgba(245,166,35,0.1); }
+
+/* ===================== WHY IT MATTERS ===================== */
+#why { background: var(--bg); }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 56px;
+}
+
+.why-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: var(--trans);
+  opacity: 0; transform: translateY(20px);
+}
+
+.why-card.visible {
+  animation: fadeUp 0.5s ease both;
+  opacity: 1; transform: none;
+}
+
+.why-card:hover { border-color: var(--border2); transform: translateY(-4px); }
+
+.why-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+}
+
+.why-title {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.why-text {
+  font-size: 14px; color: var(--text2); line-height: 1.7;
+}
+
+.why-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 10px;
+  margin-top: 16px;
+}
+
+/* ===================== KEY TERMS ===================== */
+#terms { background: var(--bg2); }
+
+.terms-intro {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 40px;
+  font-size: 14px; color: var(--text2); line-height: 1.6;
+}
+
+.terms-intro-icon { font-size: 22px; flex-shrink: 0; }
+
+.terms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.term-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: var(--trans);
+  position: relative;
+}
+
+.term-card:hover { border-color: var(--border2); background: var(--surface2); }
+
+.term-card.open { border-color: var(--border2); background: var(--surface2); }
+
+.term-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+
+.term-word {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: var(--text);
+}
+
+.term-cat {
+  font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 8px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.term-toggle {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--bg3); border: 0.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text2); flex-shrink: 0;
+  transition: var(--trans);
+}
+
+.term-card.open .term-toggle { transform: rotate(180deg); background: var(--amber); color: #0a0c0f; border-color: var(--amber); }
+
+.term-def {
+  display: none; font-size: 13px; color: var(--text2);
+  line-height: 1.65; margin-top: 12px; padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+}
+
+.term-card.open .term-def { display: block; }
+
+/* ===================== REAL WORLD ===================== */
+#realworld { background: var(--bg); }
+
+.rw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.rw-big {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  display: flex; gap: 40px; align-items: center;
+}
+
+.rw-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  transition: var(--trans);
+}
+
+.rw-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+
+.rw-num {
+  font-family: var(--font-display);
+  font-size: 56px; font-weight: 800;
+  color: var(--amber); opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.rw-title {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700; margin-bottom: 10px;
+}
+
+.rw-text { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+/* ===================== FOOTER ===================== */
+footer {
+  padding: 60px 40px;
+  border-top: 0.5px solid var(--border);
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 800;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.footer-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+
+.footer-links {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;
+  list-style: none; margin-bottom: 32px;
+}
+
+.footer-links a {
+  font-size: 13px; color: var(--text2); text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--amber); }
+
+.footer-credit { font-size: 12px; color: var(--text3); }
+
+/* ===================== PROGRESS BAR ===================== */
+.progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: transparent; z-index: 200;
+}
+
+.progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--amber), var(--teal));
+  transition: width 0.1s linear;
+}
+
+/* ===================== TOOLTIP ===================== */
+.tooltip {
+  position: fixed; z-index: 500;
+  background: var(--bg);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  max-width: 240px;
+  pointer-events: none;
+  box-shadow: var(--shadow);
+  opacity: 0; transition: opacity 0.18s;
+  font-size: 13px; color: var(--text2); line-height: 1.5;
+}
+
+.tooltip.visible { opacity: 1; }
+.tooltip strong { color: var(--text); font-size: 14px; display: block; margin-bottom: 4px; }
+
+/* Inline term highlights */
+.term-hl {
+  border-bottom: 1.5px dashed rgba(245,166,35,0.45);
+  color: var(--amber2);
+  cursor: help; font-weight: 500;
+}
+
+/* ===================== SCROLL REVEAL ===================== */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ===================== COMPARISON TABLE ===================== */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 24px; font-size: 13px;
+}
+
+.compare-table th {
+  font-family: var(--font-display);
+  font-weight: 600; font-size: 12px;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text2); padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border2);
+  text-align: left;
+}
+
+.compare-table td {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+
+.compare-table td:first-child { color: var(--text); font-weight: 500; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ===================== HERO CANVAS ===================== */
+#heroCanvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+  opacity: 0.55;
+}
+
+/* ===================== VISUALIZE SECTION ===================== */
+#visualize { background: var(--bg3); }
+
+.viz-tabs {
+  display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+}
+
+.viz-tab {
+  padding: 10px 22px; border-radius: 50px;
+  border: 0.5px solid var(--border2);
+  font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer;
+  background: transparent; transition: var(--trans);
+  font-family: var(--font-body);
+}
+
+.viz-tab.active {
+  background: var(--amber);
+  color: #0a0c0f;
+  border-color: var(--amber);
+  box-shadow: 0 4px 16px rgba(245,166,35,0.3);
+}
+
+.viz-tab:not(.active):hover { background: var(--surface); color: var(--text); }
+
+.viz-panel { display: none; animation: fadeIn 0.4s ease both; }
+.viz-panel.active { display: block; }
+
+/* ---- 3 Levels Funnel ---- */
+.levels-container {
+  display: flex; flex-direction: column; gap: 0;
+  max-width: 680px; margin: 0 auto;
+}
+
+.level-layer {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 28px 36px;
+  cursor: pointer;
+  transition: var(--trans);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.level-layer::after {
+  content: '';
+  position: absolute; bottom: -20px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  z-index: 2;
+}
+
+.level-layer:hover { transform: scaleX(1.01); }
+
+.level-layer-1 {
+  background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(245,166,35,0.05));
+  border: 0.5px solid rgba(245,166,35,0.3);
+}
+
+.level-layer-2 {
+  background: linear-gradient(135deg, rgba(45,212,176,0.12), rgba(45,212,176,0.04));
+  border: 0.5px solid rgba(45,212,176,0.25);
+  margin: 0 20px;
+}
+
+.level-layer-3 {
+  background: linear-gradient(135deg, rgba(155,127,232,0.12), rgba(155,127,232,0.04));
+  border: 0.5px solid rgba(155,127,232,0.25);
+  margin: 0 40px;
+}
+
+.level-connector {
+  height: 32px; display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.level-connector::before {
+  content: '';
+  position: absolute;
+  width: 2px; height: 100%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
+}
+
+.level-connector-arrow {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text3);
+  z-index: 1; position: relative;
+  animation: bounceDown 2s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.level-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.level-heading {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.level-body { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+.level-pills {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;
+}
+
+.level-pill {
+  font-size: 11px; padding: 4px 12px; border-radius: 20px;
+  font-weight: 600;
+}
+
+.level-who {
+  font-size: 12px; color: var(--text3); margin-top: 10px;
+}
+
+/* Animated dots inside layer */
+.level-dots-anim {
+  display: flex; gap: 6px; margin-top: 12px;
+}
+
+.ldot {
+  width: 8px; height: 8px; border-radius: 50%;
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.ldot:nth-child(2) { animation-delay: 0.3s; }
+.ldot:nth-child(3) { animation-delay: 0.6s; }
+.ldot:nth-child(4) { animation-delay: 0.9s; }
+
+@keyframes dotPulse {
+  0%,100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Star Schema Canvas ---- */
+#starCanvas {
+  width: 100%; height: 460px;
+  border-radius: var(--radius-xl);
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  display: block; cursor: crosshair;
+}
+
+.star-controls {
+  display: flex; gap: 12px; margin-top: 16px;
+  flex-wrap: wrap; align-items: center;
+}
+
+.star-legend {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-size: 12px; color: var(--text2);
+}
+
+.star-legend-item {
+  display: flex; align-items: center; gap: 7px;
+}
+
+.star-legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+
+/* ---- Row vs Column ---- */
+.storage-demo {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  margin-bottom: 24px;
+}
+
+.storage-panel {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.storage-header {
+  padding: 16px 20px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.storage-title {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+}
+
+.storage-badge {
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 8px;
+}
+
+.storage-grid-wrap {
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.storage-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+
+.storage-table th {
+  padding: 7px 10px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text3); text-align: left;
+  border-bottom: 0.5px solid var(--border2);
+}
+
+.storage-table td {
+  padding: 7px 10px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text2); transition: background 0.15s;
+  position: relative;
+}
+
+.storage-table td.highlighted {
+  background: rgba(245,166,35,0.12);
+  color: var(--amber2);
+  font-weight: 500;
+}
+
+.storage-table td.highlighted-teal {
+  background: rgba(45,212,176,0.12);
+  color: var(--teal2);
+  font-weight: 500;
+}
+
+.storage-scan-info {
+  margin-top: 14px; font-size: 12px; color: var(--text2);
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.scan-indicator {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.storage-query-bar {
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-top: 4px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+
+.query-code {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px; color: var(--teal2);
+  flex: 1;
+}
+
+.query-run-btn {
+  padding: 8px 20px; border-radius: 20px;
+  background: var(--amber); color: #0a0c0f;
+  font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer;
+  font-family: var(--font-display);
+  transition: var(--trans);
+}
+
+.query-run-btn:hover { background: var(--amber2); transform: translateY(-1px); }
+
+@media (max-width: 768px) {
+  .storage-demo { grid-template-columns: 1fr; }
+  .level-layer-2 { margin: 0 10px; }
+  .level-layer-3 { margin: 0 20px; }
+  #starCanvas { height: 320px; }
+}
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 768px) {
+  nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  section { padding: 70px 20px; }
+  #hero { padding: 90px 20px 50px; }
+
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+
+  .rw-grid { grid-template-columns: 1fr; }
+  .rw-big { flex-direction: column; gap: 20px; padding: 28px; }
+
+  .detail-panel { padding: 24px; }
+  .detail-items { grid-template-columns: 1fr; }
+
+  .compare-table { font-size: 12px; }
+  .compare-table th, .compare-table td { padding: 10px 12px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 36px; }
+  .section-title { font-size: 28px; }
+  .flow-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .terms-grid { grid-template-columns: 1fr; }
+}
+
+/* ===================== COLORS PER NODE ===================== */
+.col-amber { --node-color: var(--amber); }
+.col-teal  { --node-color: var(--teal); }
+.col-blue  { --node-color: var(--blue); }
+.col-purple{ --node-color: var(--purple); }
+.col-coral { --node-color: var(--coral); }
+.col-green { --node-color: var(--green); }
+
+.col-amber .node-icon { background: rgba(245,166,35,0.1); }
+.col-teal  .node-icon { background: rgba(45,212,176,0.1); }
+.col-blue  .node-icon { background: rgba(74,144,232,0.1); }
+.col-purple.node-icon { background: rgba(155,127,232,0.1); }
+.col-coral .node-icon { background: rgba(240,107,107,0.1); }
+.col-green .node-icon { background: rgba(92,184,122,0.1); }
+
+.col-amber .node-drill { color: var(--amber); }
+.col-teal  .node-drill { color: var(--teal); }
+.col-blue  .node-drill { color: var(--blue); }
+.col-purple.node-drill { color: var(--purple); }
+.col-coral .node-drill { color: var(--coral); }
+.col-green .node-drill { color: var(--green); }
+
+.badge-amber { background: rgba(245,166,35,0.12); color: var(--amber); }
+.badge-teal  { background: rgba(45,212,176,0.12); color: var(--teal); }
+.badge-blue  { background: rgba(74,144,232,0.12); color: var(--blue); }
+.badge-purple{ background: rgba(155,127,232,0.12); color: var(--purple); }
+.badge-coral { background: rgba(240,107,107,0.12); color: var(--coral); }
+.badge-green { background: rgba(92,184,122,0.12); color: var(--green); }
+
+.bg-amber { background: rgba(245,166,35,0.1); }
+.bg-teal  { background: rgba(45,212,176,0.1); }
+.bg-blue  { background: rgba(74,144,232,0.1); }
+.bg-purple{ background: rgba(155,127,232,0.1); }
+.bg-coral { background: rgba(240,107,107,0.1); }
+.bg-green { background: rgba(92,184,122,0.1); }
+
+.why-tag.amber { background: rgba(245,166,35,0.1); color: var(--amber); }
+.why-tag.teal  { background: rgba(45,212,176,0.1); color: var(--teal); }
+.why-tag.blue  { background: rgba(74,144,232,0.1); color: var(--blue); }
+.why-tag.coral { background: rgba(240,107,107,0.1); color: var(--coral); }
+.why-tag.purple{ background: rgba(155,127,232,0.1); color: var(--purple); }
+
+.term-cat.amber { background: rgba(245,166,35,0.1); color: var(--amber); }
+.term-cat.teal  { background: rgba(45,212,176,0.1); color: var(--teal); }
+.term-cat.blue  { background: rgba(74,144,232,0.1); color: var(--blue); }
+.term-cat.purple{ background: rgba(155,127,232,0.1); color: var(--purple); }
+.term-cat.coral { background: rgba(240,107,107,0.1); color: var(--coral); }
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"><strong id="ttTitle"></strong><span id="ttBody"></span></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span class="dot"></span> DataModel.Guide</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Intro</a></li>
+    <li><a href="#process">How It Works</a></li>
+    <li><a href="#visualize">Visualize</a></li>
+    <li><a href="#why">Why It Matters</a></li>
+    <li><a href="#terms">Key Terms</a></li>
+    <li><a href="#realworld">Real World</a></li>
+  </ul>
+</nav>
+
+<!-- ======================== HERO ======================== -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">📐 Data Engineering Series</div>
+    <h1>What is<br><span class="accent">Data Modelling?</span></h1>
+    <p class="hero-sub">The art of deciding how your data is organised, structured, and stored — before a single byte is written.</p>
+
+    <div class="hero-analogy">
+      <span class="analogy-icon">🏗️</span>
+      <p class="analogy-text">
+        <strong>Think of it like an architect's blueprint.</strong>
+        Before building a house, you decide where every room goes, how they connect, and what each space is used for. Data modelling does the same — for your data.
+      </p>
+    </div>
+
+    <a href="#process" class="btn-primary">
+      Start Exploring <span class="arrow">→</span>
+    </a>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Abstraction Levels</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Modelling Techniques</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Workload Types</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== PROCESS ======================== -->
+<section id="process">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">🔍 Interactive Explorer</span>
+      <h2 class="section-title">How Data Modelling Works</h2>
+      <p class="section-sub">Click any card to explore deeper. Navigate through layers from high-level concepts to technical implementation.</p>
+    </div>
+
+    <div class="flow-wrapper reveal" style="transition-delay: 0.1s;">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="breadcrumb-item active" onclick="navigateTo('root')">Home</span>
+      </div>
+
+      <!-- Back button -->
+      <button class="btn-back" id="backBtn" onclick="goBack()">← Back</button>
+
+      <!-- Level title -->
+      <div class="flow-level-title" id="flowLevelTitle">Choose a layer to explore</div>
+
+      <!-- Grid -->
+      <div class="flow-grid" id="flowGrid"></div>
+
+      <!-- Detail panel -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+          <div>
+            <div class="detail-title" id="detailTitle"></div>
+          </div>
+          <button class="detail-close" onclick="closeDetail()">✕</button>
+        </div>
+        <p class="detail-short" id="detailShort"></p>
+        <p class="detail-long" id="detailLong"></p>
+        <div class="detail-items" id="detailItems"></div>
+        <div class="children-hint" id="childrenHint" style="display:none" onclick="drillInto(currentNode)">
+          <span>🔍</span>
+          <span id="childrenHintText"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== VISUALIZE ======================== -->
+<section id="visualize">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">🎨 Visual Learning</span>
+      <h2 class="section-title">See it come alive</h2>
+      <p class="section-sub">Three animated diagrams that make abstract concepts tangible. Click, hover, and explore.</p>
+    </div>
+
+    <div class="viz-tabs reveal" style="margin-top:40px; transition-delay:0.1s;">
+      <button class="viz-tab active" onclick="switchViz('levels')">🏗️ The 3 Levels</button>
+      <button class="viz-tab" onclick="switchViz('star')">⭐ Star Schema Live</button>
+      <button class="viz-tab" onclick="switchViz('storage')">💾 Row vs Column Storage</button>
+    </div>
+
+    <!-- ---- VIZ 1: 3 Levels ---- -->
+    <div class="viz-panel active reveal" id="viz-levels" style="transition-delay:0.15s;">
+      <div class="levels-container">
+
+        <div class="level-layer level-layer-1" onclick="toggleLevel(this)">
+          <div class="level-label" style="color:var(--amber)">Layer 1 — Highest abstraction</div>
+          <div class="level-heading">Conceptual Model</div>
+          <div class="level-body">The <strong>"what"</strong> — plain language description of your data world. No code, no tables, no databases. Just ideas, entities, and business rules anyone can understand.</div>
+          <div class="level-pills">
+            <span class="level-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">Entities</span>
+            <span class="level-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">Relationships</span>
+            <span class="level-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">Business Rules</span>
+            <span class="level-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">ER Diagrams</span>
+          </div>
+          <div class="level-dots-anim">
+            <div class="ldot" style="background:var(--amber);"></div>
+            <div class="ldot" style="background:var(--amber);"></div>
+            <div class="ldot" style="background:var(--amber);"></div>
+            <div class="ldot" style="background:var(--amber);"></div>
+          </div>
+          <div class="level-who">👤 Created by: Business stakeholders & data architects</div>
+        </div>
+
+        <div class="level-connector">
+          <div class="level-connector-arrow">↓</div>
+        </div>
+
+        <div class="level-layer level-layer-2" onclick="toggleLevel(this)">
+          <div class="level-label" style="color:var(--teal)">Layer 2 — Mid abstraction</div>
+          <div class="level-heading">Logical Model</div>
+          <div class="level-body">The <strong>"how to structure"</strong> — concepts become tables, columns, and typed fields. You pick a data model (relational, graph, document) but still no specific database.</div>
+          <div class="level-pills">
+            <span class="level-pill" style="background:rgba(45,212,176,0.1);color:var(--teal)">Tables & Columns</span>
+            <span class="level-pill" style="background:rgba(45,212,176,0.1);color:var(--teal)">Data Types</span>
+            <span class="level-pill" style="background:rgba(45,212,176,0.1);color:var(--teal)">Foreign Keys</span>
+            <span class="level-pill" style="background:rgba(45,212,176,0.1);color:var(--teal)">Normalisation</span>
+          </div>
+          <div class="level-dots-anim">
+            <div class="ldot" style="background:var(--teal);"></div>
+            <div class="ldot" style="background:var(--teal);"></div>
+            <div class="ldot" style="background:var(--teal);"></div>
+          </div>
+          <div class="level-who">👤 Created by: Data architects</div>
+        </div>
+
+        <div class="level-connector">
+          <div class="level-connector-arrow">↓</div>
+        </div>
+
+        <div class="level-layer level-layer-3" onclick="toggleLevel(this)">
+          <div class="level-label" style="color:var(--purple)">Layer 3 — Implementation</div>
+          <div class="level-heading">Physical Model</div>
+          <div class="level-body">The <strong>"how it's actually stored"</strong> — specific database, file formats, indexes, partitions, and replication. Every decision here directly impacts performance and cost.</div>
+          <div class="level-pills">
+            <span class="level-pill" style="background:rgba(155,127,232,0.1);color:var(--purple)">Indexes</span>
+            <span class="level-pill" style="background:rgba(155,127,232,0.1);color:var(--purple)">Partitions</span>
+            <span class="level-pill" style="background:rgba(155,127,232,0.1);color:var(--purple)">File Formats</span>
+            <span class="level-pill" style="background:rgba(155,127,232,0.1);color:var(--purple)">Replication</span>
+          </div>
+          <div class="level-dots-anim">
+            <div class="ldot" style="background:var(--purple);"></div>
+            <div class="ldot" style="background:var(--purple);"></div>
+          </div>
+          <div class="level-who">👤 Created by: Data engineers & DBAs</div>
+        </div>
+
+      </div>
+      <p style="text-align:center; font-size:13px; color:var(--text3); margin-top:24px;">Click any layer to highlight it · Each layer refines the one above it</p>
+    </div>
+
+    <!-- ---- VIZ 2: Star Schema ---- -->
+    <div class="viz-panel" id="viz-star">
+      <canvas id="starCanvas"></canvas>
+      <div class="star-controls">
+        <div class="star-legend">
+          <div class="star-legend-item">
+            <div class="star-legend-dot" style="background:#f5a623;box-shadow:0 0 8px #f5a623;"></div>
+            <span>Fact Table (sales events)</span>
+          </div>
+          <div class="star-legend-item">
+            <div class="star-legend-dot" style="background:#2dd4b0;box-shadow:0 0 8px #2dd4b0;"></div>
+            <span>Dimension Tables (context)</span>
+          </div>
+          <div class="star-legend-item">
+            <div class="star-legend-dot" style="background:rgba(255,255,255,0.2);"></div>
+            <span>Data flowing to fact table</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-left:auto;">Hover over a table to highlight its connections</div>
+      </div>
+    </div>
+
+    <!-- ---- VIZ 3: Row vs Column ---- -->
+    <div class="viz-panel" id="viz-storage">
+      <div class="storage-query-bar reveal">
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:0.06em;text-transform:uppercase;">Run this query on both storage types</div>
+          <div class="query-code">SELECT SUM(revenue) FROM sales WHERE quarter = 'Q3'</div>
+        </div>
+        <button class="query-run-btn" onclick="runStorageQuery()">▶ Run Query</button>
+      </div>
+
+      <div class="storage-demo" style="margin-top:20px;" id="storageDemoWrap">
+        <div class="storage-panel">
+          <div class="storage-header">
+            <div class="storage-title">Row-Oriented Storage</div>
+            <span class="storage-badge" style="background:rgba(74,144,232,0.1);color:var(--blue);">OLTP</span>
+          </div>
+          <div class="storage-grid-wrap">
+            <table class="storage-table" id="rowTable">
+              <thead>
+                <tr>
+                  <th>sale_id</th>
+                  <th>customer</th>
+                  <th>product</th>
+                  <th>revenue</th>
+                  <th>quarter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1001</td><td>Alice</td><td>Laptop</td><td>$1,200</td><td>Q3</td></tr>
+                <tr><td>1002</td><td>Bob</td><td>Phone</td><td>$800</td><td>Q3</td></tr>
+                <tr><td>1003</td><td>Carol</td><td>Tablet</td><td>$450</td><td>Q1</td></tr>
+                <tr><td>1004</td><td>Dave</td><td>Laptop</td><td>$1,100</td><td>Q3</td></tr>
+                <tr><td>1005</td><td>Eve</td><td>Monitor</td><td>$300</td><td>Q2</td></tr>
+              </tbody>
+            </table>
+            <div class="storage-scan-info">
+              <div class="scan-indicator" id="rowIndicator" style="background:var(--text3);"></div>
+              <span id="rowScanText">Reads <strong>every row and every column</strong> — even columns it doesn't need</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="storage-panel">
+          <div class="storage-header">
+            <div class="storage-title">Column-Oriented Storage</div>
+            <span class="storage-badge" style="background:rgba(45,212,176,0.1);color:var(--teal);">OLAP</span>
+          </div>
+          <div class="storage-grid-wrap">
+            <table class="storage-table" id="colTable">
+              <thead>
+                <tr>
+                  <th>sale_id</th>
+                  <th>customer</th>
+                  <th>product</th>
+                  <th>revenue ✓</th>
+                  <th>quarter ✓</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1001</td><td>Alice</td><td>Laptop</td><td>$1,200</td><td>Q3</td></tr>
+                <tr><td>1002</td><td>Bob</td><td>Phone</td><td>$800</td><td>Q3</td></tr>
+                <tr><td>1003</td><td>Carol</td><td>Tablet</td><td>$450</td><td>Q1</td></tr>
+                <tr><td>1004</td><td>Dave</td><td>Laptop</td><td>$1,100</td><td>Q3</td></tr>
+                <tr><td>1005</td><td>Eve</td><td>Monitor</td><td>$300</td><td>Q2</td></tr>
+              </tbody>
+            </table>
+            <div class="storage-scan-info">
+              <div class="scan-indicator" id="colIndicator" style="background:var(--text3);"></div>
+              <span id="colScanText">Reads <strong>only the 2 columns needed</strong> — skips everything else</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;" id="storageResults" class="reveal">
+        <div style="background:rgba(74,144,232,0.06);border:0.5px solid rgba(74,144,232,0.2);border-radius:var(--radius);padding:16px;text-align:center;">
+          <div style="font-size:11px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Row store scanned</div>
+          <div id="rowResult" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--blue);">25 cells</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">all 5 rows × all 5 columns</div>
+        </div>
+        <div style="background:rgba(45,212,176,0.06);border:0.5px solid rgba(45,212,176,0.2);border-radius:var(--radius);padding:16px;text-align:center;">
+          <div style="font-size:11px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">Column store scanned</div>
+          <div id="colResult" style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--teal);">10 cells</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">5 rows × only 2 columns</div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:13px;color:var(--text3);margin-top:16px;">At 1 billion rows, column storage can be <strong style="color:var(--teal)">100× faster</strong> for analytical queries</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== WHY IT MATTERS ======================== -->
+<section id="why">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">💡 Why It Matters</span>
+      <h2 class="section-title">The impact of good<br>data modelling</h2>
+      <p class="section-sub">Without a well-designed data model, even the best software falls apart. Here's what's at stake.</p>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card reveal" style="transition-delay:0.1s">
+        <div class="why-icon bg-coral">🚨</div>
+        <h3 class="why-title">The problem without it</h3>
+        <p class="why-text">Data becomes duplicated, inconsistent, and fragmented across systems. Teams spend 80% of their time cleaning data instead of using it. Reports contradict each other. Decisions are made on bad information.</p>
+        <span class="why-tag coral">Problem</span>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:0.15s">
+        <div class="why-icon bg-teal">⚡</div>
+        <h3 class="why-title">Faster, smarter queries</h3>
+        <p class="why-text">A well-modelled dataset can answer business questions in milliseconds instead of minutes. Analysts stop waiting. Dashboards load instantly. Decisions are made at the speed of thought.</p>
+        <span class="why-tag teal">Performance</span>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:0.2s">
+        <div class="why-icon bg-amber">🏢</div>
+        <h3 class="why-title">One language for everyone</h3>
+        <p class="why-text">Data models create a shared vocabulary between engineers, analysts, and business teams. "Customer" means the same thing everywhere. No more "which customer table do you mean?"</p>
+        <span class="why-tag amber">Alignment</span>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:0.25s">
+        <div class="why-icon bg-blue">📈</div>
+        <h3 class="why-title">Scales with your business</h3>
+        <p class="why-text">A bad data model that works at 100 users breaks at 10 million. Good models are designed to handle growth — in data volume, team size, and analytical complexity — without needing to be rebuilt from scratch.</p>
+        <span class="why-tag blue">Scalability</span>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:0.3s">
+        <div class="why-icon bg-purple">🔒</div>
+        <h3 class="why-title">Data quality & trust</h3>
+        <p class="why-text">Models enforce rules. A "date of birth" field can't contain a future date. An "order" must have a "customer". These constraints prevent garbage from entering your system in the first place.</p>
+        <span class="why-tag purple">Quality</span>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:0.35s">
+        <div class="why-icon bg-green">🌍</div>
+        <h3 class="why-title">Used everywhere that matters</h3>
+        <p class="why-text">Netflix models what you watch to power recommendations. Banks model transactions to detect fraud. Hospitals model patient data to improve care. Data modelling is the silent backbone of every data-driven product.</p>
+        <span class="why-tag teal">Real World</span>
+      </div>
+    </div>
+
+    <!-- OLTP vs OLAP comparison -->
+    <div class="reveal" style="margin-top: 56px; transition-delay: 0.2s;">
+      <h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 8px;">Two types of workloads</h3>
+      <p style="font-size: 14px; color: var(--text2); margin-bottom: 0;">Your data model must match how the data is used:</p>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th><span style="color:var(--blue)">OLTP</span> — Transactional</th>
+              <th><span style="color:var(--purple)">OLAP</span> — Analytical</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Who uses it?</td>
+              <td>End users, web apps</td>
+              <td>Analysts, BI tools</td>
+            </tr>
+            <tr>
+              <td>What does it do?</td>
+              <td>Fast reads/writes for daily operations</td>
+              <td>Aggregates over millions of records</td>
+            </tr>
+            <tr>
+              <td>Example</td>
+              <td>"Place an order", "Update a profile"</td>
+              <td>"Revenue by region last quarter"</td>
+            </tr>
+            <tr>
+              <td>Data size</td>
+              <td>GB to TB</td>
+              <td>TB to PB</td>
+            </tr>
+            <tr>
+              <td>Storage style</td>
+              <td>Row-oriented (all columns per row)</td>
+              <td>Column-oriented (Parquet, etc.)</td>
+            </tr>
+            <tr>
+              <td>Model type</td>
+              <td>ER / Normalised (3NF)</td>
+              <td>Star Schema / Dimensional</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== KEY TERMS ======================== -->
+<section id="terms">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">📖 Glossary</span>
+      <h2 class="section-title">Key Terms, Simplified</h2>
+      <p class="section-sub">Click any term to reveal its definition. No jargon, no fluff.</p>
+    </div>
+
+    <div class="terms-intro reveal" style="margin-top:32px; transition-delay:0.1s;">
+      <span class="terms-intro-icon">💬</span>
+      <span>These are the words you'll hear in every data engineering conversation. Understanding them helps you follow technical discussions — even without a technical background.</span>
+    </div>
+
+    <div class="terms-grid reveal" style="transition-delay: 0.15s;" id="termsGrid"></div>
+  </div>
+</section>
+
+<!-- ======================== REAL WORLD ======================== -->
+<section id="realworld">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-tag">🌍 In the Wild</span>
+      <h2 class="section-title">Real-world examples</h2>
+      <p class="section-sub">Data modelling isn't academic — it powers products you use every day.</p>
+    </div>
+
+    <div class="rw-grid reveal" style="margin-top: 56px; transition-delay: 0.1s;">
+      <div class="rw-big">
+        <div style="flex:1;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--amber); margin-bottom:12px;">Featured Example</div>
+          <h3 class="rw-title" style="font-size:28px;">How Netflix models your viewing habits</h3>
+          <p class="rw-text" style="margin-top:10px; font-size:15px;">Netflix uses a dimensional model: a <span class="term-hl" data-term="fact-table" data-def="A central table in a data warehouse that stores measurable events — like a view, a pause, or a search.">fact table</span> of every viewing event (what you watched, when, for how long), surrounded by <span class="term-hl" data-term="dimensions" data-def="Tables that describe the context of facts — like time, user demographics, or content metadata.">dimension tables</span> for content, user, time, and device. This lets analysts instantly answer: "What do 25–34 year olds watch on Friday nights?"</p>
+        </div>
+        <div style="flex-shrink:0; text-align:center;">
+          <div style="font-size:72px;">📺</div>
+          <div style="font-size:13px; color:var(--text3); margin-top:8px;">Dimensional model</div>
+        </div>
+      </div>
+
+      <div class="rw-card">
+        <div class="rw-num">01</div>
+        <h3 class="rw-title">Banking & Fraud Detection</h3>
+        <p class="rw-text">Every transaction is modelled as a fact. The model enables real-time comparison against historical patterns. When a payment looks unusual, the model flags it in milliseconds — before the merchant even responds.</p>
+      </div>
+
+      <div class="rw-card">
+        <div class="rw-num">02</div>
+        <h3 class="rw-title">E-Commerce Recommendations</h3>
+        <p class="rw-text">Amazon's "Customers also bought" is powered by a graph data model where products and users are nodes, and purchases are edges. The model discovers hidden relationships between products no human could find manually.</p>
+      </div>
+
+      <div class="rw-card">
+        <div class="rw-num">03</div>
+        <h3 class="rw-title">Healthcare & Patient Records</h3>
+        <p class="rw-text">Hospitals use a carefully normalised ER model to link patient identity, diagnoses, treatments, and outcomes — while preventing duplication that could cause dangerous medication errors.</p>
+      </div>
+
+      <div class="rw-card">
+        <div class="rw-num">04</div>
+        <h3 class="rw-title">Social Media Feeds</h3>
+        <p class="rw-text">Facebook and Twitter use graph models to represent connections between billions of users. Your feed is generated by traversing this model to find what your network engaged with most recently.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FOOTER ======================== -->
+<footer>
+  <div class="footer-logo">DataModel.Guide</div>
+  <p class="footer-sub">An interactive introduction to Data Modelling in Data Engineering</p>
+  <ul class="footer-links">
+    <li><a href="#hero">Intro</a></li>
+    <li><a href="#process">How It Works</a></li>
+    <li><a href="#why">Why It Matters</a></li>
+    <li><a href="#terms">Key Terms</a></li>
+    <li><a href="#realworld">Real World</a></li>
+  </ul>
+  <p class="footer-credit">Built for a live presentation · Designed to be explored, not just read</p>
+</footer>
+
+<!-- ======================== JS ======================== -->
+<script>
+// ===================== DATA =====================
+const flowData = {
+  root: {
+    level: 'Data Modelling — Overview',
+    nodes: [
+      {
+        id: 'conceptual', color: 'amber', icon: '🗺️',
+        title: 'Conceptual Level',
+        desc: 'The "what" — what does our system contain?',
+        short: 'The highest-level view of your data. No technology involved. You\'re defining what the business needs — entities, concepts, and rules — in plain language everyone can understand.',
+        long: 'Think of this as drawing the rooms of your house before deciding on the materials or dimensions. You\'re scoping the problem: what are the key "things" (entities) in this system? What do they mean? How do they relate? This is typically done by business stakeholders and data architects collaborating together.',
+        items: [
+          { label: 'Created by', val: 'Business stakeholders + Data architects' },
+          { label: 'Outputs', val: 'ER diagrams, UML class diagrams' },
+          { label: 'Focus', val: 'Business rules, terminology, scope' },
+          { label: 'Technology?', val: 'None — completely technology-free' }
+        ],
+        badges: ['ER Diagrams', 'UML', 'Business Rules'],
+        hasChildren: true
+      },
+      {
+        id: 'logical', color: 'teal', icon: '🧩',
+        title: 'Logical Level',
+        desc: 'The "how to structure" — which data model type?',
+        short: 'Translates conceptual ideas into concrete structure. You choose the type of data model (relational tables, documents, graph nodes) and define columns, types, and relationships — without worrying about the specific database yet.',
+        long: 'This is where concepts become tables, fields, and relationships. A "Customer" entity becomes a customers table with specific columns. Relationships get foreign keys. The model follows design rules like normalisation to avoid redundancy. This is the data architect\'s primary output.',
+        items: [
+          { label: 'Created by', val: 'Data architects' },
+          { label: 'Outputs', val: 'Schema diagrams, table definitions' },
+          { label: 'Focus', val: 'Structure, relationships, data types' },
+          { label: 'Technology?', val: 'Model-specific, not DB-specific' }
+        ],
+        badges: ['Relational', 'Graph', 'Document', 'Key-Value'],
+        hasChildren: true
+      },
+      {
+        id: 'physical', color: 'purple', icon: '💾',
+        title: 'Physical Level',
+        desc: 'The "how it\'s stored" — implementation details',
+        short: 'The ground-level implementation. This is where you specify the actual database, file formats, indexes, and partitioning strategy. Every decision here directly affects performance, storage cost, and query speed.',
+        long: 'As a data engineer, this is the level you must deeply understand. Choosing the wrong index can make a query 1000x slower. Choosing the wrong file format can 10x your storage costs. You\'re also deciding: how is data replicated for fault tolerance? How is it partitioned for scalability?',
+        items: [
+          { label: 'Created by', val: 'Data engineers + DBAs' },
+          { label: 'Focus', val: 'Indexes, partitions, file formats, replication' },
+          { label: 'Storage styles', val: 'Row-oriented (OLTP), Column-oriented (OLAP)' },
+          { label: 'Examples', val: 'PostgreSQL, BigQuery, Parquet, Cassandra' }
+        ],
+        badges: ['Indexes', 'Partitioning', 'Replication', 'File Formats'],
+        hasChildren: true
+      },
+      {
+        id: 'techniques', color: 'coral', icon: '🛠️',
+        title: 'Modelling Techniques',
+        desc: 'Four proven methods for different use cases',
+        short: 'Data modelling isn\'t one-size-fits-all. Different use cases need different techniques. Four main methodologies have emerged, each optimised for different goals.',
+        long: 'Just like there are different styles of architecture — residential, commercial, industrial — there are different styles of data modelling. ER modelling is for transactional databases. Dimensional modelling is for analytics. Data Vault is for long-term history. Domain Driven Design is for complex software systems.',
+        items: [
+          { label: 'ER Modelling', val: 'Transactional systems (OLTP)' },
+          { label: 'Dimensional', val: 'Analytics & reporting (OLAP)' },
+          { label: 'Data Vault', val: 'Long-term history & auditability' },
+          { label: 'Domain Driven', val: 'Complex software / NoSQL systems' }
+        ],
+        badges: ['ER Model', 'Star Schema', 'Data Vault', 'DDD'],
+        hasChildren: true
+      }
+    ]
+  },
+  conceptual: {
+    level: 'Conceptual Level — Core Concepts',
+    nodes: [
+      {
+        id: 'entities', color: 'amber', icon: '📦',
+        title: 'Entity Sets',
+        desc: 'The "nouns" of your data world',
+        short: 'An entity is any real-world object that can be uniquely identified and stored — like a Customer, Product, or Order. An entity set groups all entities of the same type (like a class in object-oriented programming).',
+        long: 'Each entity has attributes that describe it. A Customer has a name, email, and join date. Crucially, every entity needs a primary key — a unique identifier like a customer_id — so you can always tell one from another. Without a primary key, you can\'t reliably reference that entity from anywhere else.',
+        items: [
+          { label: 'Example entities', val: 'Customer, Order, Product, Employee' },
+          { label: 'Attributes', val: 'Properties that describe the entity' },
+          { label: 'Primary Key', val: 'The unique identifier (e.g., customer_id)' },
+          { label: 'Diagram symbol', val: 'Rectangle with attributes listed inside' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'relationships', color: 'teal', icon: '🔗',
+        title: 'Relationships',
+        desc: 'How entities connect to each other',
+        short: 'A relationship shows that two entities are associated. "A Customer places an Order" — Customer and Order are entities, "places" is the relationship. The most important property is cardinality: how many of each side can participate?',
+        long: 'Cardinality answers: can one customer have many orders? Yes — that\'s a one-to-many (1:N) relationship. Can a student take many courses AND a course have many students? Yes — that\'s many-to-many (M:N). Getting cardinality right is critical — it determines whether you need a join table and how you design your foreign keys.',
+        items: [
+          { label: '1:1', val: 'Person has one passport' },
+          { label: '1:N', val: 'Customer places many Orders' },
+          { label: 'N:1', val: 'Many employees, one department' },
+          { label: 'M:N', val: 'Students enrol in many Courses' }
+        ],
+        badges: [],
+        hasChildren: false
+      }
+    ]
+  },
+  logical: {
+    level: 'Logical Level — Data Model Types',
+    nodes: [
+      {
+        id: 'relational', color: 'blue', icon: '🗃️',
+        title: 'Relational Model',
+        desc: 'Tables, rows, columns — the classic choice',
+        short: 'The relational model organises data into tables (relations). Each table has columns (attributes) and rows (tuples). Tables connect via foreign keys. This model is backed by 55+ years of research and underpins nearly all traditional databases.',
+        long: 'Invented by Edgar Codd at IBM in 1970, the relational model is the most widely used approach in the world. It\'s the foundation of SQL databases like PostgreSQL, MySQL, and Oracle. The key insight: data integrity is enforced by the model itself — a record can\'t reference something that doesn\'t exist.',
+        items: [
+          { label: 'Used in', val: 'PostgreSQL, MySQL, Oracle, SQLite' },
+          { label: 'Best for', val: 'Structured data with clear relationships' },
+          { label: 'Query language', val: 'SQL (SELECT, JOIN, GROUP BY...)' },
+          { label: 'Workload', val: 'OLTP (transactional systems)' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'document', color: 'amber', icon: '📄',
+        title: 'Document Model',
+        desc: 'Flexible JSON/XML structures',
+        short: 'Document databases store data as self-contained documents (usually JSON). Each document can have a different structure. There\'s no rigid schema. This makes it ideal for rapidly-changing data or hierarchical data that doesn\'t fit neatly into tables.',
+        long: 'The big win is the "impedance mismatch" problem: in object-oriented apps, your code works with objects, but relational databases store flat tables. Documents map naturally to objects. The downside is that joins are harder — related data is often denormalised (duplicated) inside the document.',
+        items: [
+          { label: 'Used in', val: 'MongoDB, CouchDB, Firestore' },
+          { label: 'Best for', val: 'Varying structure, nested data, rapid changes' },
+          { label: 'Example', val: 'A user profile with flexible preferences' },
+          { label: 'Trade-off', val: 'Great for reads, trickier for complex joins' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'graph', color: 'purple', icon: '🕸️',
+        title: 'Graph Model',
+        desc: 'Nodes and edges — ideal for relationships',
+        short: 'Graph models represent data as nodes (entities) and edges (relationships). Unlike relational databases where relationships are inferred from foreign keys, here relationships are first-class citizens stored directly and traversable at lightning speed.',
+        long: 'When your most important questions are about connections — "Who are the friends of friends?", "Which products are frequently bought together?", "What\'s the shortest path between these two people?" — graph models outperform relational databases by orders of magnitude. Facebook\'s social graph, LinkedIn\'s connections, and Google\'s Knowledge Graph are all graph models.',
+        items: [
+          { label: 'Used in', val: 'Neo4j, Amazon Neptune, ArangoDB' },
+          { label: 'Best for', val: 'Social networks, recommendations, fraud detection' },
+          { label: 'Example', val: 'Finding all 2nd-degree connections' },
+          { label: 'Query language', val: 'Cypher (Neo4j), Gremlin, SPARQL' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'keyvalue', color: 'green', icon: '🔑',
+        title: 'Key-Value Model',
+        desc: 'The simplest and fastest model',
+        short: 'A key-value store is like a giant dictionary or hashmap: you look up data by a key, and get a value back instantly. No complex queries, no joins — just get and set. Extreme simplicity enables extreme speed.',
+        long: 'Key-value stores are often used as a caching layer in front of slower databases. When your app needs to check the same data millions of times per second (like "is this session token valid?"), a key-value store answers in microseconds. The trade-off: you can only look up by key, not query by attribute values.',
+        items: [
+          { label: 'Used in', val: 'Redis, DynamoDB, Memcached' },
+          { label: 'Best for', val: 'Caching, sessions, real-time leaderboards' },
+          { label: 'Speed', val: 'Sub-millisecond reads and writes' },
+          { label: 'Limitation', val: 'No complex queries — only key lookup' }
+        ],
+        badges: [],
+        hasChildren: false
+      }
+    ]
+  },
+  physical: {
+    level: 'Physical Level — Storage Details',
+    nodes: [
+      {
+        id: 'rowstore', color: 'blue', icon: '📊',
+        title: 'Row-Oriented Storage',
+        desc: 'All columns of a row stored together',
+        short: 'In row-oriented storage (like most traditional databases), all the data for one record is stored next to each other on disk. Reading or writing a single record is very fast. This makes it ideal for transactional workloads where you frequently access complete individual records.',
+        long: 'When an e-commerce app processes an order, it needs to read the entire order record (customer, items, address, payment). Row storage handles this perfectly. The downside: if you want to compute "total revenue last month", the database must scan every single row and column even if you only need one column.',
+        items: [
+          { label: 'Best for', val: 'OLTP — reading/writing complete records' },
+          { label: 'Examples', val: 'PostgreSQL, MySQL, Oracle' },
+          { label: 'Weakness', val: 'Slow for analytical aggregations over many rows' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'colstore', color: 'teal', icon: '📉',
+        title: 'Column-Oriented Storage',
+        desc: 'All values of a column stored together',
+        short: 'Column stores group all values of the same column together on disk. If you query "total revenue", the database reads only the revenue column — not the customer name, date, or address. For analytics that aggregate millions of rows, this can be 100x faster.',
+        long: 'Column stores also compress extremely well — because similar values are together (e.g., thousands of "USD" strings), you can use run-length encoding and dictionary compression to shrink storage dramatically. Apache Parquet, a popular big data file format, uses columnar storage. BigQuery, Redshift, and Snowflake are all column-oriented.',
+        items: [
+          { label: 'Best for', val: 'OLAP — aggregating millions of rows' },
+          { label: 'Examples', val: 'BigQuery, Snowflake, Redshift, Parquet' },
+          { label: 'Advantage', val: 'Up to 100x faster for analytics, better compression' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'indexes', color: 'amber', icon: '📑',
+        title: 'Indexes',
+        desc: 'Trading space for query speed',
+        short: 'An index is a pre-computed data structure that lets the database find rows without scanning the entire table. Like a book\'s index — instead of reading every page to find "photosynthesis", you look it up and jump directly to the page.',
+        long: 'The most common type is a B-Tree index, which keeps values in sorted order for fast range queries ("all orders between Jan 1 and Mar 31"). Hash indexes are faster for exact lookups ("find order #12345"). Every index you add speeds up reads but slows down writes (the index must be updated too) and uses extra storage.',
+        items: [
+          { label: 'B-Tree index', val: 'Sorted — great for range queries' },
+          { label: 'Hash index', val: 'Fast exact lookups, no ranges' },
+          { label: 'Trade-off', val: 'Faster reads vs slower writes + more storage' },
+          { label: 'Rule', val: 'Index what you query by, not everything' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'partitioning', color: 'coral', icon: '🔀',
+        title: 'Partitioning (Sharding)',
+        desc: 'Splitting data across multiple machines',
+        short: 'When a database grows too large for one machine, you partition it — split the data across multiple machines, each responsible for a subset. Each partition handles its own queries in parallel, enabling horizontal scaling.',
+        long: 'If you partition by region, all European users are on Server A and US users on Server B. Queries for European data never touch Server B. But beware of hot spots — if your hash function sends 80% of traffic to one partition, that node becomes a bottleneck. Designing balanced partitions is a core data engineering skill.',
+        items: [
+          { label: 'Range partitioning', val: 'Keys A-M on server 1, N-Z on server 2' },
+          { label: 'Hash partitioning', val: 'Hash function distributes data evenly' },
+          { label: 'Hot spot', val: 'When one partition gets way more traffic' },
+          { label: 'Goal', val: 'Even load distribution for linear scaling' }
+        ],
+        badges: [],
+        hasChildren: false
+      }
+    ]
+  },
+  techniques: {
+    level: 'Modelling Techniques — Four Approaches',
+    nodes: [
+      {
+        id: 'er-model', color: 'amber', icon: '🏛️',
+        title: 'ER Modelling',
+        desc: 'The classic approach for transactional systems',
+        short: 'Entity-Relationship modelling, created by Peter Chen in 1976, is the foundation of relational database design. You model the business as entities (nouns) connected by relationships (verbs), then translate this into normalised tables.',
+        long: 'ER modelling follows normalisation rules (1NF → 2NF → 3NF) to eliminate data duplication. The result is a clean, accurate representation of the real world where each fact is stored exactly once. This makes updates safe — change a customer\'s address in one place and it\'s updated everywhere. ER is the gold standard for OLTP systems.',
+        items: [
+          { label: 'Best for', val: 'OLTP — banking, e-commerce, CRM systems' },
+          { label: 'Key principle', val: 'Normalisation — each fact stored once' },
+          { label: 'Design process', val: 'Entities → Attributes → Relationships → Keys → Normalise' },
+          { label: 'Output', val: 'Normalised relational schema' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'dimensional', color: 'teal', icon: '⭐',
+        title: 'Dimensional Modelling',
+        desc: 'The star schema — built for analytics',
+        short: 'Developed by Ralph Kimball, dimensional modelling deliberately breaks normalisation rules to make analytics fast and intuitive. At its center is a fact table (measurable events) surrounded by dimension tables (context). This star-shaped structure is called a Star Schema.',
+        long: 'Fact tables contain numbers you measure (revenue, quantity, clicks). Dimension tables contain descriptive context (who, what, where, when). Analysts can slice and dice the fact table by any combination of dimensions: "Show revenue (fact) by product (dim) and region (dim) for Q3 (time dim)." Denormalisation means some data is duplicated, but query performance is dramatically better for analytics.',
+        items: [
+          { label: 'Best for', val: 'OLAP — BI dashboards, analytics, reporting' },
+          { label: 'Key principle', val: 'Fact tables + Dimension tables = Star Schema' },
+          { label: 'Design process', val: 'Business process → Grain → Dimensions → Facts' },
+          { label: 'Output', val: 'Star or Snowflake schema' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'datavault', color: 'blue', icon: '🏦',
+        title: 'Data Vault',
+        desc: 'Auditability, history, and integration',
+        short: 'Data Vault modelling prioritises capturing the full history of your data with complete auditability. Nothing is ever deleted or overwritten — every change is recorded with a timestamp. It\'s the approach of choice for regulated industries like banking and healthcare.',
+        long: 'Data Vault uses three building blocks: Hubs (unique business keys, like customer IDs), Links (relationships between hubs), and Satellites (descriptive data with full history). It\'s designed to be highly resilient to changing business requirements — you can add new data sources without rewriting the whole model. The trade-off: it\'s complex to query and requires transformation before analysts can use it.',
+        items: [
+          { label: 'Best for', val: 'Regulated industries, data integration, history' },
+          { label: 'Building blocks', val: 'Hubs (keys) + Links (relations) + Satellites (history)' },
+          { label: 'Key strength', val: 'Audit trail — nothing ever deleted' },
+          { label: 'Limitation', val: 'Cannot be queried directly — needs transformation' }
+        ],
+        badges: [],
+        hasChildren: false
+      },
+      {
+        id: 'ddd', color: 'purple', icon: '🎯',
+        title: 'Domain Driven Design',
+        desc: 'Software-first, business-language focused',
+        short: 'Domain Driven Design (DDD) is less about databases and more about building software that faithfully reflects the business domain. It creates a shared "ubiquitous language" between developers and business experts — the same words mean the same things in both code and conversation.',
+        long: 'DDD is the go-to approach for NoSQL systems and complex microservice architectures. Key concepts include Entities (objects with identity), Value Objects (objects defined by their data, not identity), Aggregates (clusters of objects treated as a unit), and Repositories (interfaces for storing/retrieving aggregates). Event Sourcing — storing every change as an immutable event rather than just the current state — is often paired with DDD.',
+        items: [
+          { label: 'Best for', val: 'NoSQL, microservices, complex business domains' },
+          { label: 'Key concepts', val: 'Entities, Value Objects, Aggregates, Events' },
+          { label: 'Key strength', val: 'Business + engineering speak the same language' },
+          { label: 'Pairs well with', val: 'Event Sourcing, CQRS, Kafka' }
+        ],
+        badges: [],
+        hasChildren: false
+      }
+    ]
+  }
+};
+
+const termsData = [
+  { word: 'Data Model', cat: 'Core', catColor: 'amber', def: 'A blueprint that defines the structure, relationships, and rules governing how data is organised and stored in a system.' },
+  { word: 'Entity', cat: 'ER Model', catColor: 'blue', def: 'A real-world object or concept (like a Customer or Order) that can be uniquely identified and stored in a database.' },
+  { word: 'Attribute', cat: 'ER Model', catColor: 'blue', def: 'A property or characteristic of an entity. For example, a Customer entity has attributes: name, email, and date of birth.' },
+  { word: 'Primary Key', cat: 'Core', catColor: 'amber', def: 'A unique identifier for each record in a table. No two rows can have the same primary key. Example: customer_id = 12345.' },
+  { word: 'Foreign Key', cat: 'Core', catColor: 'amber', def: 'A column in one table that references the primary key of another table, creating a link between them.' },
+  { word: 'Normalisation', cat: 'ER Model', catColor: 'blue', def: 'The process of organising data to eliminate duplication. 3NF (Third Normal Form) is the standard target: each fact is stored exactly once.' },
+  { word: 'Schema', cat: 'Core', catColor: 'amber', def: 'The blueprint of a database — it defines the tables, columns, data types, and relationships before any data is stored.' },
+  { word: 'Star Schema', cat: 'Dimensional', catColor: 'teal', def: 'A database design pattern for analytics: one central fact table surrounded by multiple dimension tables, creating a star shape.' },
+  { word: 'Fact Table', cat: 'Dimensional', catColor: 'teal', def: 'The central table in a star schema. Contains measurable events (like a sale) with numeric values and foreign keys to dimension tables.' },
+  { word: 'Dimension Table', cat: 'Dimensional', catColor: 'teal', def: 'A table that provides descriptive context for fact table records — who, what, where, when. Examples: Date, Product, Customer.' },
+  { word: 'OLTP', cat: 'Workload', catColor: 'purple', def: 'Online Transactional Processing. Fast, small read/write operations for day-to-day business operations. Example: placing an order.' },
+  { word: 'OLAP', cat: 'Workload', catColor: 'purple', def: 'Online Analytical Processing. Large-scale queries that aggregate millions of records for business intelligence. Example: monthly revenue report.' },
+  { word: 'Index', cat: 'Physical', catColor: 'coral', def: 'A data structure that speeds up queries by creating a shortcut to find rows without scanning the entire table — like a book\'s index.' },
+  { word: 'Partitioning', cat: 'Physical', catColor: 'coral', def: 'Splitting a large dataset across multiple machines or files, each handling a portion of the data, to enable horizontal scaling.' },
+  { word: 'CAP Theorem', cat: 'Distributed', catColor: 'teal', def: 'A distributed system can only guarantee two of three properties: Consistency, Availability, and Partition Tolerance — never all three simultaneously.' },
+  { word: 'Schema on Read', cat: 'Big Data', catColor: 'blue', def: 'A Big Data approach where raw data is stored first and the schema is applied only when data is queried — offering maximum flexibility.' },
+  { word: 'Grain', cat: 'Dimensional', catColor: 'teal', def: 'In dimensional modelling, the grain defines exactly what one row in the fact table represents. Example: "one row = one product sold in one transaction".' },
+  { word: 'Surrogate Key', cat: 'Dimensional', catColor: 'teal', def: 'An artificial unique identifier (usually an auto-incrementing integer) added to dimension tables, separate from any business identifiers.' }
+];
+
+// ===================== FLOW NAVIGATION =====================
+let navStack = ['root'];
+let currentNode = null;
+
+function renderFlow(levelKey) {
+  const data = flowData[levelKey];
+  if (!data) return;
+
+  const grid = document.getElementById('flowGrid');
+  const levelTitle = document.getElementById('flowLevelTitle');
+  const backBtn = document.getElementById('backBtn');
+  const breadcrumb = document.getElementById('breadcrumb');
+  const detailPanel = document.getElementById('detailPanel');
+
+  detailPanel.classList.remove('open');
+  grid.innerHTML = '';
+  levelTitle.textContent = data.level;
+
+  // Back button
+  if (navStack.length > 1) {
+    backBtn.classList.add('visible');
+  } else {
+    backBtn.classList.remove('visible');
+  }
+
+  // Breadcrumb
+  breadcrumb.innerHTML = navStack.map((key, i) => {
+    const isLast = i === navStack.length - 1;
+    const label = key === 'root' ? 'Home' : flowData[key]?.level?.split('—')[0].trim() || key;
+    return `
+      ${i > 0 ? '<span class="breadcrumb-sep">›</span>' : ''}
+      <span class="breadcrumb-item ${isLast ? 'active' : ''}" onclick="navigateTo('${key}')">${label}</span>
+    `;
+  }).join('');
+
+  // Render nodes
+  data.nodes.forEach((node, i) => {
+    const badgesHtml = node.badges.map(b => `<span class="node-badge">${b}</span>`).join('');
+    const drillHtml = node.hasChildren
+      ? `<span class="node-drill">Explore deeper →</span>`
+      : `<span class="node-drill" style="color:var(--text3)">Click to learn more</span>`;
+
+    const el = document.createElement('div');
+    el.className = `flow-node col-${node.color}`;
+    el.style.animationDelay = `${i * 0.07}s`;
+    el.innerHTML = `
+      <div class="node-icon">${node.icon}</div>
+      <div class="node-title">${node.title}</div>
+      <div class="node-desc">${node.desc}</div>
+      ${badgesHtml ? `<div>${badgesHtml}</div>` : ''}
+      <div class="node-footer">
+        <span style="font-size:11px; color:var(--text3)">${node.hasChildren ? 'Has sub-levels' : 'Leaf node'}</span>
+        ${drillHtml}
+      </div>
+    `;
+    el.onclick = () => openDetail(node);
+    grid.appendChild(el);
+  });
+}
+
+function openDetail(node) {
+  currentNode = node;
+  const panel = document.getElementById('detailPanel');
+  document.getElementById('detailTitle').innerHTML = node.icon + ' ' + node.title;
+  document.getElementById('detailShort').textContent = node.short;
+  document.getElementById('detailLong').textContent = node.long;
+
+  const itemsEl = document.getElementById('detailItems');
+  itemsEl.innerHTML = node.items.map(item => `
+    <div class="detail-item">
+      <div class="detail-item-label">${item.label}</div>
+      <div class="detail-item-val">${item.val}</div>
+    </div>
+  `).join('');
+
+  const hintEl = document.getElementById('childrenHint');
+  const hintText = document.getElementById('childrenHintText');
+  if (node.hasChildren && flowData[node.id]) {
+    hintEl.style.display = 'flex';
+    hintText.textContent = `Explore the sub-levels of "${node.title}" →`;
+  } else {
+    hintEl.style.display = 'none';
+  }
+
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  currentNode = null;
+}
+
+function drillInto(node) {
+  if (!node || !flowData[node.id]) return;
+  navStack.push(node.id);
+  renderFlow(node.id);
+  document.getElementById('process').scrollIntoView({ behavior: 'smooth' });
+}
+
+function goBack() {
+  if (navStack.length > 1) {
+    navStack.pop();
+    renderFlow(navStack[navStack.length - 1]);
+  }
+}
+
+function navigateTo(key) {
+  const idx = navStack.indexOf(key);
+  if (idx !== -1) {
+    navStack = navStack.slice(0, idx + 1);
+    renderFlow(key);
+  }
+}
+
+// ===================== TERMS =====================
+function renderTerms() {
+  const grid = document.getElementById('termsGrid');
+  termsData.forEach(term => {
+    const card = document.createElement('div');
+    card.className = 'term-card';
+    card.innerHTML = `
+      <div class="term-header">
+        <div class="term-word">${term.word}</div>
+        <span class="term-cat ${term.catColor}">${term.cat}</span>
+        <div class="term-toggle">▾</div>
+      </div>
+      <div class="term-def">${term.def}</div>
+    `;
+    card.onclick = () => card.classList.toggle('open');
+    grid.appendChild(card);
+  });
+}
+
+// ===================== TOOLTIP for .term-hl =====================
+const tooltip = document.getElementById('tooltip');
+const ttTitle = document.getElementById('ttTitle');
+const ttBody = document.getElementById('ttBody');
+
+document.addEventListener('mousemove', (e) => {
+  const el = e.target.closest('.term-hl');
+  if (el) {
+    ttTitle.textContent = el.dataset.term;
+    ttBody.textContent = el.dataset.def;
+    tooltip.classList.add('visible');
+    tooltip.style.left = Math.min(e.clientX + 16, window.innerWidth - 260) + 'px';
+    tooltip.style.top = Math.min(e.clientY + 16, window.innerHeight - 120) + 'px';
+  } else {
+    tooltip.classList.remove('visible');
+  }
+});
+
+// ===================== SCROLL REVEAL =====================
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+revealEls.forEach(el => revealObserver.observe(el));
+
+// ===================== PROGRESS BAR =====================
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (scrollTop / docH) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+});
+
+// ===================== ACTIVE NAV =====================
+const sections = document.querySelectorAll('section[id]');
+const navAs = document.querySelectorAll('.nav-links a');
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navAs.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+
+sections.forEach(s => navObserver.observe(s));
+
+// ===================== HERO CANVAS =====================
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes, animFrame;
+
+  const nodeLabels = [
+    'Customer','Order','Product','Payment',
+    'Invoice','Address','Category','Review',
+    'Shipment','Supplier','Employee','Store',
+    'Transaction','Session','Event','Report'
+  ];
+
+  const colors = ['#f5a623','#2dd4b0','#4a90e8','#9b7fe8','#f06b6b','#5cb87a'];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    initNodes();
+  }
+
+  function initNodes() {
+    nodes = nodeLabels.map((label, i) => ({
+      label,
+      x: Math.random() * (W - 120) + 60,
+      y: Math.random() * (H - 80) + 40,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 5 + 5,
+      color: colors[i % colors.length],
+      alpha: Math.random() * 0.4 + 0.4,
+      pulse: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw connections
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 200) {
+          const opacity = (1 - dist/200) * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(255,255,255,${opacity})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+
+          // Animate data packet along edge
+          if (dist < 140 && Math.sin(t * 0.001 + i * 0.7 + j * 0.3) > 0.7) {
+            const progress = ((t * 0.0008 + i * 0.4) % 1);
+            const px = a.x + dx * progress;
+            const py = a.y + dy * progress;
+            ctx.beginPath();
+            ctx.arc(px, py, 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(245,166,35,0.7)`;
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach((n, i) => {
+      n.pulse += 0.025;
+      const pulsed = n.r + Math.sin(n.pulse) * 1.5;
+
+      // Glow
+      const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, pulsed * 4);
+      grad.addColorStop(0, n.color + '33');
+      grad.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, pulsed * 4, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Node circle
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, pulsed, 0, Math.PI * 2);
+      ctx.fillStyle = n.color;
+      ctx.globalAlpha = n.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Label (only for bigger nodes)
+      if (n.r > 7) {
+        ctx.font = '500 11px "DM Sans", sans-serif';
+        ctx.fillStyle = `rgba(232,236,244,0.55)`;
+        ctx.textAlign = 'center';
+        ctx.fillText(n.label, n.x, n.y + pulsed + 14);
+      }
+
+      // Move
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 30 || n.x > W - 30) n.vx *= -1;
+      if (n.y < 20 || n.y > H - 20) n.vy *= -1;
+    });
+
+    animFrame = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animFrame = requestAnimationFrame(draw);
+})();
+
+// ===================== VIZ TABS =====================
+function switchViz(tab) {
+  document.querySelectorAll('.viz-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.viz-panel').forEach(p => p.classList.remove('active'));
+
+  const tabEl = document.querySelector(`.viz-tab[onclick="switchViz('${tab}')"]`);
+  const panelEl = document.getElementById('viz-' + tab);
+  if (tabEl) tabEl.classList.add('active');
+  if (panelEl) panelEl.classList.add('active');
+
+  if (tab === 'star') {
+    setTimeout(initStarCanvas, 60);
+  }
+}
+
+// ===================== LEVEL LAYER TOGGLE =====================
+function toggleLevel(el) {
+  const wasActive = el.classList.contains('expanded');
+  document.querySelectorAll('.level-layer').forEach(l => {
+    l.classList.remove('expanded');
+    l.style.boxShadow = '';
+  });
+  if (!wasActive) {
+    el.classList.add('expanded');
+    const color = el.classList.contains('level-layer-1') ? '#f5a623'
+                : el.classList.contains('level-layer-2') ? '#2dd4b0'
+                : '#9b7fe8';
+    el.style.boxShadow = `0 0 32px ${color}28, inset 0 0 20px ${color}0a`;
+  }
+}
+
+// ===================== STAR SCHEMA CANVAS =====================
+let starCtx, starW, starH, starAnim, starHover = -1;
+
+const starNodes = [
+  { id: 'fact',     label: 'FACT\nSales',        color: '#f5a623', glow: '#f5a623', r: 52, facts: ['quantity','revenue','discount','units_sold'] },
+  { id: 'date',     label: 'DIM\nDate',           color: '#2dd4b0', glow: '#2dd4b0', r: 40, facts: ['day','month','quarter','year','weekday'] },
+  { id: 'product',  label: 'DIM\nProduct',        color: '#4a90e8', glow: '#4a90e8', r: 40, facts: ['name','category','brand','price','SKU'] },
+  { id: 'customer', label: 'DIM\nCustomer',       color: '#9b7fe8', glow: '#9b7fe8', r: 40, facts: ['name','age','city','segment','email'] },
+  { id: 'store',    label: 'DIM\nStore',          color: '#5cb87a', glow: '#5cb87a', r: 40, facts: ['name','city','region','country','size'] },
+];
+
+let packets = [];
+
+function initStarCanvas() {
+  const canvas = document.getElementById('starCanvas');
+  if (!canvas) return;
+  if (starAnim) cancelAnimationFrame(starAnim);
+
+  starCtx = canvas.getContext('2d');
+  starW = canvas.width  = canvas.offsetWidth;
+  starH = canvas.height = canvas.offsetHeight;
+
+  const cx = starW / 2, cy = starH / 2;
+  const arms = starNodes.length - 1;
+  const radius = Math.min(starW, starH) * 0.33;
+
+  starNodes[0].x = cx; starNodes[0].y = cy;
+  for (let i = 0; i < arms; i++) {
+    const angle = (i / arms) * Math.PI * 2 - Math.PI / 2;
+    starNodes[i + 1].x = cx + Math.cos(angle) * radius;
+    starNodes[i + 1].y = cy + Math.sin(angle) * radius;
+  }
+
+  packets = [];
+  for (let i = 1; i < starNodes.length; i++) {
+    packets.push({ from: i, progress: Math.random(), speed: 0.004 + Math.random() * 0.003 });
+  }
+
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (starW / rect.width);
+    const my = (e.clientY - rect.top)  * (starH / rect.height);
+    starHover = -1;
+    starNodes.forEach((n, i) => {
+      const dx = mx - n.x, dy = my - n.y;
+      if (Math.sqrt(dx*dx + dy*dy) < n.r + 16) starHover = i;
+    });
+  });
+
+  canvas.addEventListener('mouseleave', () => { starHover = -1; });
+
+  drawStar(0);
+}
+
+function drawStar(t) {
+  starCtx.clearRect(0, 0, starW, starH);
+  const fact = starNodes[0];
+
+  // Draw connector lines
+  for (let i = 1; i < starNodes.length; i++) {
+    const dim = starNodes[i];
+    const active = starHover === 0 || starHover === i;
+    const alpha = active ? 0.5 : 0.12;
+
+    starCtx.beginPath();
+    starCtx.moveTo(fact.x, fact.y);
+    starCtx.lineTo(dim.x, dim.y);
+    starCtx.strokeStyle = `rgba(255,255,255,${alpha})`;
+    starCtx.lineWidth = active ? 1.5 : 0.5;
+    starCtx.setLineDash(active ? [] : [5, 5]);
+    starCtx.stroke();
+    starCtx.setLineDash([]);
+  }
+
+  // Draw packets (data flowing to center)
+  packets.forEach(pkt => {
+    pkt.progress += pkt.speed;
+    if (pkt.progress > 1) pkt.progress = 0;
+
+    const dim = starNodes[pkt.from];
+    const active = starHover === 0 || starHover === pkt.from;
+    if (!active && starHover !== -1) return;
+
+    const px = dim.x + (fact.x - dim.x) * pkt.progress;
+    const py = dim.y + (fact.y - dim.y) * pkt.progress;
+
+    const pktGrad = starCtx.createRadialGradient(px, py, 0, px, py, 5);
+    pktGrad.addColorStop(0, dim.color);
+    pktGrad.addColorStop(1, 'transparent');
+    starCtx.beginPath();
+    starCtx.arc(px, py, 5, 0, Math.PI * 2);
+    starCtx.fillStyle = pktGrad;
+    starCtx.fill();
+  });
+
+  // Draw nodes
+  starNodes.forEach((n, i) => {
+    const active = starHover === i || starHover === 0 || (starHover > 0 && i === 0);
+    const scale = active ? 1.08 : 1;
+
+    // Glow ring
+    const glowSize = n.r * scale + (active ? 18 : 8);
+    const glowGrad = starCtx.createRadialGradient(n.x, n.y, n.r * scale * 0.5, n.x, n.y, glowSize);
+    glowGrad.addColorStop(0, n.glow + (active ? '44' : '1a'));
+    glowGrad.addColorStop(1, 'transparent');
+    starCtx.beginPath();
+    starCtx.arc(n.x, n.y, glowSize, 0, Math.PI * 2);
+    starCtx.fillStyle = glowGrad;
+    starCtx.fill();
+
+    // Node bg
+    starCtx.beginPath();
+    starCtx.arc(n.x, n.y, n.r * scale, 0, Math.PI * 2);
+    starCtx.fillStyle = active ? '#1e2330' : '#181c23';
+    starCtx.fill();
+
+    // Node border
+    starCtx.beginPath();
+    starCtx.arc(n.x, n.y, n.r * scale, 0, Math.PI * 2);
+    starCtx.strokeStyle = n.color + (active ? 'cc' : '55');
+    starCtx.lineWidth = active ? 2 : 1;
+    starCtx.stroke();
+
+    // Label
+    const lines = n.label.split('\n');
+    starCtx.textAlign = 'center';
+    if (lines[0] === 'FACT') {
+      starCtx.font = `700 10px "DM Sans", sans-serif`;
+      starCtx.fillStyle = n.color;
+      starCtx.fillText(lines[0], n.x, n.y - 6);
+      starCtx.font = `600 13px "Syne", sans-serif`;
+      starCtx.fillStyle = '#e8ecf4';
+      starCtx.fillText(lines[1], n.x, n.y + 9);
+    } else {
+      starCtx.font = `600 9px "DM Sans", sans-serif`;
+      starCtx.fillStyle = n.color + 'aa';
+      starCtx.fillText(lines[0], n.x, n.y - 5);
+      starCtx.font = `600 11px "Syne", sans-serif`;
+      starCtx.fillStyle = '#e8ecf4';
+      starCtx.fillText(lines[1], n.x, n.y + 7);
+    }
+
+    // Hover tooltip: show field list
+    if (starHover === i) {
+      const tx = n.x + (n.x < starW * 0.5 ? n.r + 20 : -(n.r + 20 + 140));
+      const ty = n.y - 60;
+      const bw = 148, bh = n.facts.length * 20 + 16;
+
+      starCtx.fillStyle = '#1e2330';
+      starCtx.strokeStyle = n.color + '66';
+      starCtx.lineWidth = 0.5;
+      roundRect(starCtx, tx, ty, bw, bh, 8);
+      starCtx.fill();
+      starCtx.stroke();
+
+      starCtx.font = '500 11px "DM Sans", sans-serif';
+      starCtx.textAlign = 'left';
+      n.facts.forEach((f, fi) => {
+        starCtx.fillStyle = fi === 0 ? n.color : '#8a93a8';
+        starCtx.fillText((fi === 0 ? '🔑 ' : '• ') + f, tx + 10, ty + 14 + fi * 20);
+      });
+    }
+  });
+
+  starAnim = requestAnimationFrame(drawStar);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ===================== STORAGE DEMO =====================
+let storageQueryRan = false;
+
+function runStorageQuery() {
+  const rowTbl = document.getElementById('rowTable');
+  const colTbl = document.getElementById('colTable');
+
+  // Reset
+  rowTbl.querySelectorAll('td').forEach(td => td.classList.remove('highlighted','highlighted-teal'));
+  colTbl.querySelectorAll('td').forEach(td => td.classList.remove('highlighted','highlighted-teal'));
+
+  const rowIndicator = document.getElementById('rowIndicator');
+  const colIndicator = document.getElementById('colIndicator');
+  const rowScanText = document.getElementById('rowScanText');
+  const colScanText = document.getElementById('colScanText');
+
+  rowIndicator.style.background = 'var(--amber)';
+  rowIndicator.style.boxShadow = '0 0 8px var(--amber)';
+  colIndicator.style.background = 'var(--teal)';
+  colIndicator.style.boxShadow = '0 0 8px var(--teal)';
+
+  // Row store: scan ALL cells row by row with delay
+  const rowRows = rowTbl.querySelectorAll('tbody tr');
+  let delay = 0;
+  rowRows.forEach((row, ri) => {
+    const cells = row.querySelectorAll('td');
+    cells.forEach((td, ci) => {
+      setTimeout(() => { td.classList.add('highlighted'); }, delay);
+      delay += 35;
+    });
+  });
+
+  // Col store: scan ONLY revenue (col 3) and quarter (col 4)
+  const colRows = colTbl.querySelectorAll('tbody tr');
+  let cDelay = 0;
+  colRows.forEach((row, ri) => {
+    const cells = row.querySelectorAll('td');
+    [3, 4].forEach(ci => {
+      setTimeout(() => { cells[ci].classList.add('highlighted-teal'); }, cDelay);
+      cDelay += 50;
+    });
+  });
+
+  rowScanText.innerHTML = '⚡ Scanning <strong>all 25 cells</strong> — reads data it doesn\'t need';
+  colScanText.innerHTML = '✅ Scanning <strong>only 10 cells</strong> — skips unused columns entirely';
+
+  storageQueryRan = true;
+}
+
+// ===================== INIT STAR ON SCROLL =====================
+const starObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const activeTab = document.querySelector('.viz-tab.active');
+      if (activeTab && activeTab.textContent.includes('Star')) {
+        initStarCanvas();
+      }
+    }
+  });
+}, { threshold: 0.3 });
+
+const vizSection = document.getElementById('visualize');
+if (vizSection) starObserver.observe(vizSection);
+
+</script>
+</body>
+</html>
